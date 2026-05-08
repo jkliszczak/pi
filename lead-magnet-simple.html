@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The 5-Minute Cold Email Infrastructure Blueprint — Richard Illingworth</title>
+  <meta name="description" content="The exact technical setup behind 2,000+ client-owned inbox deployments that land in the primary inbox. Free download." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:         #070806;
+      --bg-card:    #111110;
+      --bg-card2:   #161614;
+      --border:     #242420;
+      --border-lt:  #2e2e2a;
+      --accent:     #E8A020;
+      --accent-btn: #FFA800;
+      --text:       #FFFFFF;
+      --text-muted: #888880;
+      --text-dim:   #555550;
+      --radius:     14px;
+      --radius-sm:  8px;
+    }
+
+    html, body { height: 100%; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      overflow: hidden;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* ── DOT-GRID BACKGROUND ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: radial-gradient(circle, #333330 1px, transparent 1px);
+      background-size: 28px 28px;
+      opacity: 0.25;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── LAYOUT ── */
+    .page {
+      position: relative;
+      z-index: 1;
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 28px 24px 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── LOGO ── */
+    .logo {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 24px;
+      flex-shrink: 0;
+    }
+
+    .logo img {
+      height: 32px;
+      width: auto;
+    }
+
+    /* ── MAIN GRID ── */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 40px;
+      align-items: start;
+      flex: 1;
+    }
+
+    /* ── LEFT: CONTENT ── */
+    .content-col {}
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(232,160,32,0.1);
+      border: 1px solid rgba(232,160,32,0.25);
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      border-radius: 100px;
+      margin-bottom: 14px;
+    }
+
+    .badge-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    h1 {
+      font-size: clamp(24px, 3vw, 38px);
+      font-weight: 900;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      margin-bottom: 10px;
+    }
+
+    h1 .accent { color: var(--accent); }
+
+    .hero-sub {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 18px;
+      line-height: 1.6;
+      max-width: 520px;
+    }
+
+    /* ── WHAT'S INSIDE ── */
+    .inside-label {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 16px;
+    }
+
+    .inside-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .inside-list li {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 15px;
+      color: var(--text);
+      line-height: 1.4;
+    }
+
+    .check {
+      flex-shrink: 0;
+      width: 20px;
+      height: 20px;
+      background: rgba(232,160,32,0.12);
+      border: 1px solid rgba(232,160,32,0.3);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 2px;
+    }
+
+    .check svg {
+      width: 10px;
+      height: 10px;
+      stroke: var(--accent);
+      fill: none;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .inside-list li strong { color: var(--text); }
+
+    /* ── MOCKUP ── */
+    .mockup {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+
+    .mockup-header {
+      background: #0f0f0e;
+      border-bottom: 1px solid var(--border);
+      padding: 9px 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .mockup-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .mockup-dot:nth-child(1) { background: #ff5f57; }
+    .mockup-dot:nth-child(2) { background: #febc2e; }
+    .mockup-dot:nth-child(3) { background: #28c840; }
+
+    .mockup-title {
+      font-size: 12px;
+      color: var(--text-dim);
+      margin-left: 8px;
+      font-weight: 500;
+    }
+
+    .mockup-body {
+      padding: 12px 14px;
+    }
+
+    .mockup-section {
+      margin-bottom: 8px;
+    }
+
+    .mockup-section-title {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+
+    .mockup-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 9px;
+      background: var(--bg-card2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      margin-bottom: 3px;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .mockup-item-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      flex-shrink: 0;
+    }
+
+    .mockup-item-dot.green { background: #28c840; }
+    .mockup-item-dot.red   { background: #ff5f57; }
+
+    /* ── MINI CHECKLIST GRID ── */
+    .mini-check-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+
+    .mini-check-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      padding: 7px 10px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .mini-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+      flex-shrink: 0;
+    }
+
+    .mini-dot.green { background: #28c840; }
+    .mini-dot.red   { background: #ff5f57; }
+
+    /* ── SOCIAL PROOF STRIP ── */
+    .social-strip {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .stars { display: flex; gap: 2px; }
+    .star  { color: var(--accent); font-size: 14px; }
+
+    .social-strip-text {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .social-divider {
+      width: 1px;
+      height: 14px;
+      background: var(--border);
+    }
+
+    /* ── RIGHT: FORM CARD ── */
+    .form-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px;
+      position: sticky;
+      top: 0;
+    }
+
+    .form-card-title {
+      font-size: 20px;
+      font-weight: 800;
+      line-height: 1.25;
+      margin-bottom: 8px;
+      letter-spacing: -0.02em;
+    }
+
+    .form-card-sub {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+      line-height: 1.5;
+    }
+
+    .form-field {
+      margin-bottom: 8px;
+    }
+
+    .form-field input {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border-lt);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 14px;
+      padding: 11px 14px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .form-field input::placeholder { color: var(--text-dim); }
+    .form-field input:focus { border-color: var(--accent); }
+
+    .form-btn {
+      width: 100%;
+      background: var(--accent-btn);
+      color: #000;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 800;
+      padding: 13px;
+      border: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      transition: opacity 0.15s;
+      margin-bottom: 10px;
+    }
+
+    .form-btn:hover { opacity: 0.88; }
+
+    .form-note {
+      font-size: 11px;
+      color: var(--text-dim);
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    .form-note a {
+      color: var(--text-muted);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    /* ── DIVIDER ── */
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 14px 0;
+    }
+
+    /* ── ABOUT ROW ── */
+    .about-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .about-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--bg-card2);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+
+    .about-name {
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .about-role {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 24px;
+      border-top: 1px solid var(--border);
+      font-size: 12px;
+      color: var(--text-dim);
+    }
+
+    footer a {
+      color: var(--text-muted);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      margin: 0 8px;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      body { overflow: auto; }
+      .page { height: auto; padding-bottom: 40px; }
+      .main-grid {
+        grid-template-columns: 1fr;
+      }
+      .form-card {
+        position: static;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page">
+
+    <!-- LOGO -->
+    <div class="logo">
+      <a href="https://premiuminboxes.com">
+        <img src="bEn3ED0qcThRt87DayzX9STo7U.png" alt="Premium Inboxes" />
+      </a>
+    </div>
+
+    <!-- MAIN GRID -->
+    <div class="main-grid">
+
+      <!-- LEFT: CONTENT -->
+      <div class="content-col">
+
+        <div class="badge">
+          <span class="badge-dot"></span>
+          Free Resource
+        </div>
+
+        <h1>
+          The <span class="accent">5-Minute</span> Cold Email<br />
+          Infrastructure Blueprint
+        </h1>
+
+        <p class="hero-sub">
+          The exact technical setup behind 2,000+ client-owned inbox deployments that land in the primary inbox (not the spam folder).
+        </p>
+
+        <!-- WHAT'S INSIDE -->
+        <p class="inside-label">What's inside</p>
+        <ul class="inside-list">
+          <li>
+            <span class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>
+            <span>Score Your Infrastructure in 5 Minutes</span>
+          </li>
+          <li>
+            <span class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>
+            <span>The 4 Pre-Send Checkpoints</span>
+          </li>
+          <li>
+            <span class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>
+            <span>The Two-Lane Provider Strategy</span>
+          </li>
+          <li>
+            <span class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>
+            <span>The 21-Day Warmup Sequence</span>
+          </li>
+          <li>
+            <span class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>
+            <span>Infrastructure Cheat Sheet</span>
+          </li>
+        </ul>
+
+        <!-- SOCIAL PROOF -->
+        <div class="social-strip">
+          <div class="stars">
+            <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+          </div>
+          <span class="social-strip-text">4.9/5 · 340+ reviews</span>
+          <div class="social-divider"></div>
+          <span class="social-strip-text">2,000+ agencies</span>
+          <div class="social-divider"></div>
+          <span class="social-strip-text">200,000+ inboxes managed</span>
+        </div>
+
+      </div>
+
+      <!-- RIGHT: FORM CARD -->
+      <div class="form-card">
+
+        <p class="form-card-title">Get instant access. It's free.</p>
+
+        <form onsubmit="handleSubmit(event)">
+          <div class="form-field">
+            <input type="text" id="name" placeholder="First name" required />
+          </div>
+          <div class="form-field">
+            <input type="email" id="email" placeholder="Work email" required />
+          </div>
+          <button type="submit" class="form-btn">Send me the blueprint →</button>
+          <p class="form-note">
+            No spam. Unsubscribe any time. <a href="https://premiuminboxes.com/privacy-policy" target="_blank">Privacy policy</a>
+          </p>
+        </form>
+
+
+
+      </div>
+
+    </div>
+  </div>
+
+
+
+  <script>
+    function handleSubmit(e) {
+      e.preventDefault();
+      const name  = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      // Replace with your actual email platform opt-in endpoint
+      alert('Thanks, ' + name + '! Check your inbox — the blueprint is on its way.\n\n(Connect your email platform to activate this form.)');
+    }
+  </script>
+
+</body>
+</html>
