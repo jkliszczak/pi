@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Check Your Inbox. Your Resource Is On Its Way.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:          #070806;
+      --bg-card:     #0f0f0e;
+      --bg-card2:    #161614;
+      --border:      rgba(255,255,255,0.08);
+      --border-lt:   rgba(255,255,255,0.12);
+      --text:        #f5f4f0;
+      --text-muted:  rgba(245,244,240,0.55);
+      --text-dim:    rgba(245,244,240,0.35);
+      --accent:      #E8A020;
+      --accent-btn:  #FFA800;
+      --green:       #28c840;
+      --radius:      16px;
+      --radius-sm:   8px;
+    }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* ── DOT-GRID BACKGROUND ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image:
+        radial-gradient(circle at 50% 0%, rgba(232,160,32,0.07) 0%, transparent 55%),
+        radial-gradient(rgba(255,255,255,0.04) 1px, transparent 1px);
+      background-size: 100% 100%, 28px 28px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── PAGE SHELL ── */
+    .page {
+      position: relative;
+      z-index: 1;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: 28px 40px 24px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* ── LOGO ── */
+    .logo {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 28px;
+      flex-shrink: 0;
+    }
+
+    .logo img {
+      height: 32px;
+      width: auto;
+    }
+
+    /* ── MAIN CARD ── */
+    .main-card {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      background: var(--bg-card);
+      border: 1px solid var(--border-lt);
+      border-radius: var(--radius);
+      overflow: hidden;
+      min-height: 0;
+    }
+
+    /* ── LEFT PANEL ── */
+    .left-panel {
+      padding: 44px 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      border-right: 1px solid var(--border);
+    }
+
+    /* Success badge */
+    .success-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(40,200,64,0.1);
+      border: 1px solid rgba(40,200,64,0.25);
+      color: var(--green);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      border-radius: 100px;
+      margin-bottom: 24px;
+      width: fit-content;
+    }
+
+    .success-badge svg {
+      width: 14px; height: 14px;
+      stroke: var(--green);
+      stroke-width: 2.5;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    /* Headline */
+    .confirm-headline {
+      font-size: clamp(30px, 3.5vw, 46px);
+      font-weight: 900;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      margin-bottom: 16px;
+    }
+
+    .confirm-headline .accent { color: var(--accent); }
+
+    /* Sub */
+    .confirm-sub {
+      font-size: 15px;
+      color: var(--text-muted);
+      line-height: 1.65;
+      margin-bottom: 32px;
+      max-width: 380px;
+    }
+
+    /* Divider */
+    .panel-divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin-bottom: 28px;
+    }
+
+    /* Meantime section */
+    .meantime-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 14px;
+    }
+
+    .meantime-text {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.65;
+      margin-bottom: 6px;
+    }
+
+    .meantime-text strong {
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    /* Time note */
+    .time-note {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 12px;
+      color: var(--text-dim);
+      margin-top: 20px;
+      background: var(--bg-card2);
+      border: 1px solid var(--border);
+      padding: 8px 14px;
+      border-radius: 100px;
+    }
+
+    .time-note svg {
+      width: 13px; height: 13px;
+      stroke: var(--text-dim);
+      stroke-width: 2;
+      fill: none;
+      flex-shrink: 0;
+    }
+
+    /* What's next list */
+    .next-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+
+    .next-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.55;
+    }
+
+    .next-list li strong { color: var(--text); }
+
+    .next-num {
+      flex-shrink: 0;
+      width: 22px; height: 22px;
+      background: rgba(232,160,32,0.1);
+      border: 1px solid rgba(232,160,32,0.25);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--accent);
+      margin-top: 1px;
+    }
+
+    /* ── RIGHT PANEL — SURVEY EMBED ── */
+    .right-panel {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .survey-header {
+      padding: 20px 28px 16px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .survey-header-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.01em;
+      margin-bottom: 3px;
+    }
+
+    .survey-header-sub {
+      font-size: 12px;
+      color: var(--text-dim);
+    }
+
+    /* Survey embed area */
+    .survey-embed-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 28px;
+      gap: 16px;
+      background: var(--bg-card2);
+    }
+
+    .embed-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      border: 2px dashed rgba(232,160,32,0.2);
+      border-radius: var(--radius-sm);
+      padding: 32px;
+      text-align: center;
+    }
+
+    .embed-icon {
+      width: 44px; height: 44px;
+      background: rgba(232,160,32,0.08);
+      border: 1px solid rgba(232,160,32,0.2);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .embed-icon svg {
+      width: 20px; height: 20px;
+      stroke: var(--accent);
+      stroke-width: 1.8;
+      fill: none;
+    }
+
+    .embed-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
+    .embed-sub {
+      font-size: 12px;
+      color: var(--text-dim);
+      line-height: 1.6;
+      max-width: 280px;
+    }
+
+    .embed-code-hint {
+      font-size: 11px;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      color: var(--accent);
+      background: rgba(232,160,32,0.06);
+      border: 1px solid rgba(232,160,32,0.15);
+      padding: 6px 12px;
+      border-radius: 6px;
+      letter-spacing: 0.02em;
+    }
+
+    /* ── FOOTER ── */
+    .footer {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      padding-top: 16px;
+    }
+
+    .footer a {
+      font-size: 12px;
+      color: var(--text-dim);
+      transition: color 0.15s;
+    }
+
+    .footer a:hover { color: var(--text-muted); }
+
+    .footer-dot {
+      width: 3px; height: 3px;
+      background: var(--text-dim);
+      border-radius: 50%;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 820px) {
+      html, body { overflow: auto; }
+      .page { height: auto; padding: 24px 20px 32px; }
+      .main-card { grid-template-columns: 1fr; }
+      .left-panel { border-right: none; border-bottom: 1px solid var(--border); }
+      .right-panel { min-height: 420px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page">
+
+    <!-- LOGO -->
+    <div class="logo">
+      <img src="assets/pi-logo.png" alt="Premium Inboxes" />
+    </div>
+
+    <!-- MAIN CARD -->
+    <div class="main-card">
+
+      <!-- LEFT: CONFIRMATION MESSAGE -->
+      <div class="left-panel">
+
+        <div class="success-badge">
+          <svg viewBox="0 0 14 14"><polyline points="2,7 5.5,10.5 12,3"/></svg>
+          On its way
+        </div>
+
+        <h1 class="confirm-headline">
+          Check your inbox.<br><span class="accent">Your resource is on its way.</span>
+        </h1>
+
+        <p class="confirm-sub">
+          It's heading to your inbox right now. If you don't see it in the next few minutes, check your spam folder and mark us as safe.
+        </p>
+
+        <hr class="panel-divider" />
+
+        <p class="meantime-label">In the meantime…</p>
+
+        <p class="meantime-text">
+          While you wait, would you mind answering <strong>a few quick questions?</strong>
+        </p>
+        <p class="meantime-text">
+          This helps us send you follow-up resources that are <strong>actually relevant</strong> to your setup. Not generic tips you've already seen.
+        </p>
+
+        <div class="time-note">
+          <svg viewBox="0 0 14 14">
+            <circle cx="7" cy="7" r="5.5"/>
+            <polyline points="7,4 7,7 9,9"/>
+          </svg>
+          Takes less than 60 seconds
+        </div>
+
+      </div>
+
+      <!-- RIGHT: SURVEY EMBED AREA -->
+      <div class="right-panel">
+
+        <div class="survey-embed-area">
+          <!-- ============================================================
+               REPLACE THIS ENTIRE BLOCK WITH YOUR SURVEY EMBED CODE
+               (e.g. Typeform, Tally, ConvertKit survey, etc.)
+               ============================================================ -->
+          <div class="embed-placeholder">
+            <div class="embed-icon">
+              <svg viewBox="0 0 24 24">
+                <rect x="3" y="3" width="18" height="18" rx="3"/>
+                <line x1="8" y1="9" x2="16" y2="9"/>
+                <line x1="8" y1="13" x2="16" y2="13"/>
+                <line x1="8" y1="17" x2="12" y2="17"/>
+              </svg>
+            </div>
+            <div class="embed-title">Segmentation Survey Embed</div>
+          </div>
+          <!-- ============================================================
+               END SURVEY EMBED BLOCK
+               ============================================================ -->
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+      <a href="https://premiuminboxes.com" target="_blank">premiuminboxes.com</a>
+      <div class="footer-dot"></div>
+      <a href="https://premiuminboxes.com/privacy-policy" target="_blank">Privacy Policy</a>
+      <div class="footer-dot"></div>
+      <a href="https://premiuminboxes.com/anti-spam-policy" target="_blank">Anti-Spam Policy</a>
+    </div>
+
+  </div>
+
+</body>
+</html>
