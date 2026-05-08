@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cold Email Confessions — by Richard Illingworth</title>
+  <meta name="description" content="The unfiltered truth about cold email infrastructure, deliverability, and scaling. From a founder managing 200,000+ inboxes who has seen everything go wrong." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #070806;
+      --bg-card:   #111110;
+      --border:    #242420;
+      --accent:    #E8A020;
+      --accent-btn:#FFA800;
+      --text:      #FFFFFF;
+      --text-muted:#888880;
+      --text-dim:  #555550;
+      --radius:    12px;
+      --radius-sm: 8px;
+    }
+
+    html, body {
+      height: 100%;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      /* Full-viewport hero — nothing scrollable below */
+      overflow: hidden;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* ── FULL-VIEWPORT HERO ── */
+    .hero {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      overflow: hidden;
+      padding: 0 24px;
+    }
+
+    /* dot-grid background */
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(circle, #333330 1px, transparent 1px);
+      background-size: 28px 28px;
+      opacity: 0.35;
+      pointer-events: none;
+    }
+
+    /* amber radial glow */
+    .hero::after {
+      content: '';
+      position: absolute;
+      top: -120px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 800px;
+      height: 600px;
+      background: radial-gradient(ellipse at center, rgba(232,160,32,0.13) 0%, transparent 68%);
+      pointer-events: none;
+    }
+
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      max-width: 720px;
+      width: 100%;
+    }
+
+    /* ── LOGO ── */
+    .logo {
+      margin-bottom: 36px;
+    }
+
+    .logo img {
+      height: 36px;
+      width: auto;
+      display: block;
+    }
+
+    /* ── BADGE ── */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(232,160,32,0.1);
+      border: 1px solid rgba(232,160,32,0.25);
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      border-radius: 100px;
+      margin-bottom: 28px;
+    }
+
+    .badge-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* ── HEADLINE ── */
+    h1 {
+      font-size: clamp(34px, 5.5vw, 62px);
+      font-weight: 900;
+      line-height: 1.08;
+      letter-spacing: -0.03em;
+      margin-bottom: 20px;
+    }
+
+    h1 .accent { color: var(--accent); }
+
+    /* ── SUB-HEADLINE ── */
+    .hero-sub {
+      font-size: clamp(15px, 1.8vw, 18px);
+      color: var(--text-muted);
+      max-width: 520px;
+      margin: 0 auto 36px;
+      line-height: 1.65;
+    }
+
+    /* ── OPT-IN FORM ── */
+    .optin-form {
+      display: flex;
+      gap: 10px;
+      width: 100%;
+      max-width: 460px;
+      margin: 0 auto 14px;
+    }
+
+    .optin-form input[type="email"] {
+      flex: 1;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 15px;
+      padding: 14px 18px;
+      outline: none;
+      transition: border-color 0.15s;
+      min-width: 0;
+    }
+
+    .optin-form input[type="email"]::placeholder { color: var(--text-dim); }
+    .optin-form input[type="email"]:focus { border-color: var(--accent); }
+
+    .optin-form button {
+      background: var(--accent-btn);
+      color: #000;
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 700;
+      padding: 14px 22px;
+      border: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: opacity 0.15s;
+    }
+
+    .optin-form button:hover { opacity: 0.88; }
+
+    .optin-note {
+      font-size: 12px;
+      color: var(--text-dim);
+      margin-bottom: 32px;
+    }
+
+    /* ── SOCIAL PROOF ── */
+    .social-proof {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .stars {
+      display: flex;
+      gap: 2px;
+    }
+
+    .star { color: var(--accent); font-size: 15px; }
+
+    .social-proof-text {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .social-proof-divider {
+      width: 1px;
+      height: 14px;
+      background: var(--border);
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 540px) {
+      body { overflow: auto; }
+      .hero { height: auto; min-height: 100vh; padding: 60px 20px; }
+      .optin-form { flex-direction: column; }
+      .optin-form button { width: 100%; }
+      .social-proof-divider { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <section class="hero">
+    <div class="hero-inner">
+
+      <!-- LOGO -->
+      <div class="logo">
+        <a href="https://premiuminboxes.com">
+          <img src="assets/pi-logo.png" alt="Premium Inboxes" />
+        </a>
+      </div>
+
+      <!-- BADGE -->
+      <div class="badge">
+        <span class="badge-dot"></span>
+        Cold Email Confessions
+      </div>
+
+      <!-- HEADLINE -->
+      <h1>
+        Land more cold emails<br />
+        in the <span class="accent">primary inbox</span><br />
+        <span style="font-size: 0.72em; font-weight: 700; color: var(--text-muted);">(without spending hours fighting deliverability)</span>
+      </h1>
+
+      <!-- SUB-HEADLINE -->
+      <p class="hero-sub">
+        The unfiltered truth about cold email infrastructure, deliverability, and scaling. From a founder managing 200,000+ inboxes who has seen everything go wrong.
+      </p>
+
+      <!-- OPT-IN FORM -->
+      <form class="optin-form" onsubmit="handleSubmit(event)">
+        <input type="email" placeholder="Enter your email" required />
+        <button type="submit">Subscribe Free →</button>
+      </form>
+
+      <p class="optin-note">Free. Weekly. No spam. Unsubscribe any time.</p>
+
+      <!-- SOCIAL PROOF -->
+      <div class="social-proof">
+        <div class="stars">
+          <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+        </div>
+        <span class="social-proof-text">4.9/5 from 340+ reviews</span>
+        <div class="social-proof-divider"></div>
+        <span class="social-proof-text">Trusted by 2,000+ agencies</span>
+        <div class="social-proof-divider"></div>
+        <span class="social-proof-text">200,000+ inboxes managed</span>
+      </div>
+
+    </div>
+  </section>
+
+  <script>
+    function handleSubmit(e) {
+      e.preventDefault();
+      const email = e.target.querySelector('input[type="email"]').value;
+      // Replace with your actual email platform opt-in endpoint
+      alert('Thanks! Check your inbox to confirm your subscription.\n\n(Connect your email platform to activate this form.)');
+    }
+  </script>
+
+</body>
+</html>
