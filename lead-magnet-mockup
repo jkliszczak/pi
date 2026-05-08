@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The 5-Minute Cold Email Infrastructure Blueprint — Richard Illingworth</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:          #070806;
+      --bg-card:     #0f0f0e;
+      --bg-card2:    #161614;
+      --border:      rgba(255,255,255,0.08);
+      --border-lt:   rgba(255,255,255,0.12);
+      --text:        #f5f4f0;
+      --text-muted:  rgba(245,244,240,0.55);
+      --text-dim:    rgba(245,244,240,0.35);
+      --accent:      #E8A020;
+      --accent-btn:  #FFA800;
+      --green:       #28c840;
+      --red:         #ff5f57;
+      --radius:      14px;
+      --radius-sm:   8px;
+    }
+
+    html, body { height: 100%; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      overflow: hidden;
+    }
+
+    /* Right column scrolls independently */
+    .right-col {
+      max-height: calc(100vh - 90px);
+      overflow-y: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      padding-bottom: 24px;
+    }
+
+    .right-col::-webkit-scrollbar { display: none; }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* ── DOT-GRID BACKGROUND ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: radial-gradient(circle at 50% 0%, rgba(232,160,32,0.08) 0%, transparent 60%),
+        radial-gradient(rgba(255,255,255,0.04) 1px, transparent 1px);
+      background-size: 100% 100%, 28px 28px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── LAYOUT ── */
+    .page {
+      position: relative;
+      z-index: 1;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 28px 32px 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── LOGO ── */
+    .logo {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 28px;
+      flex-shrink: 0;
+    }
+
+    .logo img {
+      height: 32px;
+      width: auto;
+    }
+
+    /* ── MAIN GRID ── */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1fr 420px;
+      gap: 48px;
+      align-items: start;
+      flex: 1;
+    }
+
+    /* ── LEFT COLUMN ── */
+    .content-col {}
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(232,160,32,0.1);
+      border: 1px solid rgba(232,160,32,0.25);
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      border-radius: 100px;
+      margin-bottom: 16px;
+    }
+
+    .badge-dot {
+      width: 6px; height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    h1 {
+      font-size: clamp(26px, 3.2vw, 42px);
+      font-weight: 900;
+      line-height: 1.08;
+      letter-spacing: -0.03em;
+      margin-bottom: 12px;
+    }
+
+    h1 .accent { color: var(--accent); }
+
+    .hero-sub {
+      font-size: 15px;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+      line-height: 1.6;
+      max-width: 480px;
+    }
+
+    .hook {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+      line-height: 1.65;
+      max-width: 480px;
+    }
+
+    /* ── WHAT'S INSIDE ── */
+    .inside-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 12px;
+    }
+
+    .inside-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 22px;
+    }
+
+    .inside-list li {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.4;
+    }
+
+    .check {
+      flex-shrink: 0;
+      width: 20px; height: 20px;
+      background: rgba(232,160,32,0.12);
+      border: 1px solid rgba(232,160,32,0.3);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .check svg {
+      width: 10px; height: 10px;
+      stroke: var(--accent);
+      stroke-width: 2.5;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    /* ── SOCIAL PROOF ── */
+    .social-strip {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .stars { display: flex; gap: 2px; }
+    .star { color: var(--accent); font-size: 13px; }
+
+    .social-strip-text {
+      font-size: 12px;
+      color: var(--text-dim);
+    }
+
+    .social-divider {
+      width: 1px; height: 14px;
+      background: var(--border-lt);
+    }
+
+    /* ── RIGHT COLUMN ── */
+    .right-col-inner {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* ── DOCUMENT MOCKUP ── */
+    .doc-mockup {
+      background: #111110;
+      border: 1px solid var(--border-lt);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.04);
+    }
+
+    /* Mockup top bar */
+    .doc-topbar {
+      background: #0a0a09;
+      border-bottom: 1px solid var(--border);
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .doc-dots { display: flex; gap: 5px; }
+    .doc-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+    }
+    .doc-dot.r { background: #ff5f57; }
+    .doc-dot.y { background: #febc2e; }
+    .doc-dot.g { background: #28c840; }
+
+    .doc-title-bar {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-dim);
+      letter-spacing: 0.04em;
+    }
+
+    .doc-badge {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: rgba(232,160,32,0.1);
+      border: 1px solid rgba(232,160,32,0.2);
+      padding: 2px 8px;
+      border-radius: 100px;
+    }
+
+    /* Mockup body */
+    .doc-body {
+      padding: 16px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .doc-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 10px;
+      margin-bottom: 2px;
+    }
+
+    .doc-header-title {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: -0.02em;
+      margin-bottom: 3px;
+    }
+
+    .doc-header-sub {
+      font-size: 10px;
+      color: var(--text-dim);
+    }
+
+    .doc-section-title {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 5px;
+    }
+
+    .doc-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 8px;
+      background: var(--bg-card2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      margin-bottom: 3px;
+    }
+
+    .doc-row-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .doc-row-text {
+      font-size: 10px;
+      color: var(--text-muted);
+      flex: 1;
+    }
+
+    .doc-row-tag {
+      font-size: 9px;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 4px;
+    }
+
+    .doc-row-tag.pass {
+      background: rgba(40,200,64,0.12);
+      color: var(--green);
+      border: 1px solid rgba(40,200,64,0.2);
+    }
+
+    .doc-row-tag.fail {
+      background: rgba(255,95,87,0.12);
+      color: var(--red);
+      border: 1px solid rgba(255,95,87,0.2);
+    }
+
+    .doc-row-tag.pending {
+      background: rgba(232,160,32,0.12);
+      color: var(--accent);
+      border: 1px solid rgba(232,160,32,0.2);
+    }
+
+    .doc-score-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      background: rgba(232,160,32,0.06);
+      border: 1px solid rgba(232,160,32,0.15);
+      border-radius: 7px;
+      margin-top: 2px;
+    }
+
+    .doc-score-label {
+      font-size: 10px;
+      color: var(--text-muted);
+      flex: 1;
+    }
+
+    .doc-score-value {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--accent);
+    }
+
+    .doc-divider {
+      border: none;
+      border-top: 1px solid var(--border);
+    }
+
+    .doc-two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+
+    .doc-three-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+    }
+
+    .doc-col {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .doc-mini-card {
+      background: var(--bg-card2);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      padding: 7px 9px;
+    }
+
+    .doc-mini-card-label {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 3px;
+    }
+
+    .doc-mini-card-value {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .doc-mini-card-sub {
+      font-size: 9px;
+      color: var(--text-dim);
+      margin-top: 1px;
+    }
+
+    /* ── FORM CARD ── */
+    .form-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+
+    .form-card-title {
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 14px;
+      letter-spacing: -0.02em;
+    }
+
+    .form-field { margin-bottom: 8px; }
+
+    .form-field input {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border-lt);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 14px;
+      padding: 11px 14px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .form-field input::placeholder { color: var(--text-dim); }
+    .form-field input:focus { border-color: var(--accent); }
+
+    .form-btn {
+      width: 100%;
+      background: var(--accent-btn);
+      color: #000;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 800;
+      padding: 13px;
+      border: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      transition: opacity 0.15s;
+      margin-bottom: 10px;
+    }
+
+    .form-btn:hover { opacity: 0.9; }
+
+    .form-note {
+      font-size: 11px;
+      color: var(--text-dim);
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    .form-note a {
+      color: var(--text-dim);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 820px) {
+      body { overflow: auto; }
+      .page { height: auto; padding-bottom: 48px; }
+      .main-grid { grid-template-columns: 1fr; gap: 32px; }
+      .doc-mockup { transform: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page">
+
+    <!-- LOGO -->
+    <div class="logo">
+      <img src="assets/pi-logo.png" alt="Premium Inboxes" />
+    </div>
+
+    <!-- MAIN GRID -->
+    <div class="main-grid">
+
+      <!-- LEFT: CONTENT -->
+      <div class="content-col">
+
+        <div class="badge">
+          <span class="badge-dot"></span>
+          Free Resource
+        </div>
+
+        <h1>The <span class="accent">5-Minute</span> Cold Email<br>Infrastructure Blueprint</h1>
+
+        <p class="hero-sub">
+          The exact technical setup behind 2,000+ client-owned inbox deployments that land in the primary inbox (not the spam folder).
+        </p>
+
+        <!-- WHAT'S INSIDE -->
+        <p class="inside-label">What's inside</p>
+        <ul class="inside-list">
+          <li>
+            <span class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>
+            <span>Score Your Infrastructure in 5 Minutes</span>
+          </li>
+          <li>
+            <span class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>
+            <span>The 4 Pre-Send Checkpoints</span>
+          </li>
+          <li>
+            <span class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>
+            <span>The Two-Lane Provider Strategy</span>
+          </li>
+          <li>
+            <span class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>
+            <span>The 21-Day Warmup Sequence</span>
+          </li>
+          <li>
+            <span class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>
+            <span>Infrastructure Cheat Sheet</span>
+          </li>
+        </ul>
+
+        <!-- SOCIAL PROOF -->
+        <div class="social-strip">
+          <div class="stars">
+            <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+          </div>
+          <span class="social-strip-text">4.9/5 · 340+ reviews</span>
+          <div class="social-divider"></div>
+          <span class="social-strip-text">2,000+ agencies</span>
+          <div class="social-divider"></div>
+          <span class="social-strip-text">200,000+ inboxes managed</span>
+        </div>
+
+      </div>
+
+      <!-- RIGHT: MOCKUP + FORM -->
+      <div class="right-col">
+      <div class="right-col-inner">
+
+        <!-- DOCUMENT MOCKUP -->
+        <div class="doc-mockup">
+          <div class="doc-topbar">
+            <div class="doc-dots">
+              <div class="doc-dot r"></div>
+              <div class="doc-dot y"></div>
+              <div class="doc-dot g"></div>
+            </div>
+            <div class="doc-title-bar">Infrastructure Blueprint</div>
+            <div class="doc-badge">Free</div>
+          </div>
+
+          <div class="doc-body">
+
+            <!-- Header -->
+            <div class="doc-header">
+              <div class="doc-header-title">The 5-Minute Cold Email Infrastructure Blueprint</div>
+              <div class="doc-header-sub">Richard Illingworth · Premium Inboxes</div>
+            </div>
+
+            <!-- Three-column horizontal sections -->
+            <div class="doc-three-col">
+
+              <!-- Col 1: Self-Audit -->
+              <div class="doc-col">
+                <div class="doc-section-title">⚡ Infrastructure Audit</div>
+                <div class="doc-row">
+                  <div class="doc-row-dot" style="background:var(--green)"></div>
+                  <div class="doc-row-text">SPF record</div>
+                  <div class="doc-row-tag pass">Pass</div>
+                </div>
+                <div class="doc-row">
+                  <div class="doc-row-dot" style="background:var(--green)"></div>
+                  <div class="doc-row-text">DKIM aligned</div>
+                  <div class="doc-row-tag pass">Pass</div>
+                </div>
+                <div class="doc-row">
+                  <div class="doc-row-dot" style="background:var(--red)"></div>
+                  <div class="doc-row-text">DMARC policy</div>
+                  <div class="doc-row-tag fail">Fix</div>
+                </div>
+                <div class="doc-row">
+                  <div class="doc-row-dot" style="background:var(--accent)"></div>
+                  <div class="doc-row-text">Domain ratio</div>
+                  <div class="doc-row-tag pending">Check</div>
+                </div>
+                <div class="doc-score-bar">
+                  <div class="doc-score-label">Score</div>
+                  <div class="doc-score-value">74/100</div>
+                </div>
+              </div>
+
+              <!-- Col 2: Two-Lane -->
+              <div class="doc-col">
+                <div class="doc-section-title">🔀 Two-Lane Strategy</div>
+                <div class="doc-mini-card" style="margin-bottom:5px">
+                  <div class="doc-mini-card-label">Lane A</div>
+                  <div class="doc-mini-card-value">Google Workspace</div>
+                  <div class="doc-mini-card-sub">Primary sending lane</div>
+                </div>
+                <div class="doc-mini-card">
+                  <div class="doc-mini-card-label">Lane B</div>
+                  <div class="doc-mini-card-value">Microsoft 365</div>
+                  <div class="doc-mini-card-sub">Backup + volume split</div>
+                </div>
+              </div>
+
+              <!-- Col 3: Warmup -->
+              <div class="doc-col">
+                <div class="doc-section-title">🚀 21-Day Warmup</div>
+                <div class="doc-row">
+                  <div class="doc-row-dot" style="background:var(--green)"></div>
+                  <div class="doc-row-text">Day 1–7</div>
+                  <div class="doc-row-tag pass">Active</div>
+                </div>
+                <div class="doc-row">
+                  <div class="doc-row-dot" style="background:var(--accent)"></div>
+                  <div class="doc-row-text">Day 8–14</div>
+                  <div class="doc-row-tag pending">Soon</div>
+                </div>
+                <div class="doc-row">
+                  <div class="doc-row-dot" style="background:var(--border-lt)"></div>
+                  <div class="doc-row-text">Day 15–21</div>
+                  <div class="doc-row-tag" style="background:rgba(255,255,255,0.05);color:var(--text-dim);border:1px solid var(--border)">Locked</div>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+
+        <!-- FORM CARD -->
+        <div class="form-card">
+          <p class="form-card-title">Get instant access. It's free.</p>
+          <form onsubmit="handleSubmit(event)">
+            <div class="form-field">
+              <input type="text" id="name" placeholder="First name" required />
+            </div>
+            <div class="form-field">
+              <input type="email" id="email" placeholder="Work email" required />
+            </div>
+            <button type="submit" class="form-btn">Send me the blueprint →</button>
+            <p class="form-note">
+              No spam. Unsubscribe any time. <a href="https://premiuminboxes.com/privacy-policy" target="_blank">Privacy policy</a>
+            </p>
+          </form>
+        </div>
+
+      </div><!-- /right-col-inner -->
+      </div><!-- /right-col -->
+    </div>
+  </div>
+
+  <script>
+    function handleSubmit(e) {
+      e.preventDefault();
+      const name  = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      // Replace with your actual email platform opt-in endpoint
+      alert('Thanks, ' + name + '! Check your inbox — the blueprint is on its way.\n\n(Connect your email platform to activate this form.)');
+    }
+  </script>
+
+</body>
+</html>
