@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Check Your Inbox. Watch This Next.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:          #070806;
+      --bg-card:     #0f0f0e;
+      --bg-card2:    #161614;
+      --border:      rgba(255,255,255,0.08);
+      --border-lt:   rgba(255,255,255,0.12);
+      --text:        #f5f4f0;
+      --text-muted:  rgba(245,244,240,0.55);
+      --text-dim:    rgba(245,244,240,0.35);
+      --accent:      #E8A020;
+      --accent-btn:  #FFA800;
+      --green:       #28c840;
+      --radius:      16px;
+      --radius-sm:   10px;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* ── DOT-GRID BACKGROUND ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image:
+        radial-gradient(circle at 50% 0%, rgba(232,160,32,0.07) 0%, transparent 55%),
+        radial-gradient(rgba(255,255,255,0.04) 1px, transparent 1px);
+      background-size: 100% 100%, 28px 28px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── PAGE WRAPPER ── */
+    .page {
+      position: relative;
+      z-index: 1;
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 36px 24px 64px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+    }
+
+    /* ── LOGO ── */
+    .logo {
+      margin-bottom: 36px;
+    }
+    .logo img {
+      height: 30px;
+      width: auto;
+    }
+
+    /* ── CONFIRMATION HEADER ── */
+    .confirm-header {
+      text-align: center;
+      margin-bottom: 32px;
+      width: 100%;
+    }
+
+    .success-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: rgba(40,200,64,0.1);
+      border: 1px solid rgba(40,200,64,0.25);
+      color: var(--green);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      padding: 5px 13px;
+      border-radius: 100px;
+      margin-bottom: 20px;
+    }
+
+    .success-badge svg {
+      width: 13px; height: 13px;
+      stroke: var(--green);
+      stroke-width: 2.5;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .confirm-headline {
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 900;
+      line-height: 1.08;
+      letter-spacing: -0.03em;
+      margin-bottom: 14px;
+    }
+
+    .confirm-headline .accent { color: var(--accent); }
+
+    .confirm-sub {
+      font-size: 15px;
+      color: var(--text-muted);
+      line-height: 1.65;
+      max-width: 520px;
+      margin: 0 auto;
+    }
+
+    /* ── WATCH NEXT PROMPT ── */
+    .watch-prompt {
+      width: 100%;
+      background: rgba(232,160,32,0.06);
+      border: 1px solid rgba(232,160,32,0.2);
+      border-radius: var(--radius-sm);
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .watch-icon {
+      flex-shrink: 0;
+      width: 40px; height: 40px;
+      background: rgba(232,160,32,0.12);
+      border: 1px solid rgba(232,160,32,0.25);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .watch-icon svg {
+      width: 16px; height: 16px;
+      fill: var(--accent);
+      margin-left: 2px;
+    }
+
+    .watch-text {
+      flex: 1;
+    }
+
+    .watch-text strong {
+      display: block;
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 2px;
+      letter-spacing: -0.01em;
+    }
+
+    .watch-text span {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* ── VSL EMBED ── */
+    .vsl-wrap {
+      width: 100%;
+      margin-bottom: 36px;
+    }
+
+    .vsl-container {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: var(--bg-card);
+      border: 1px solid var(--border-lt);
+      border-radius: var(--radius);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      position: relative;
+    }
+
+    /* Placeholder state — remove when embedding real video */
+    .vsl-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      text-align: center;
+      padding: 32px;
+    }
+
+    .vsl-play-btn {
+      width: 64px; height: 64px;
+      background: rgba(232,160,32,0.1);
+      border: 1px solid rgba(232,160,32,0.3);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .vsl-play-btn svg {
+      width: 24px; height: 24px;
+      fill: var(--accent);
+      margin-left: 3px;
+    }
+
+    .vsl-placeholder-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
+    .vsl-placeholder-sub {
+      font-size: 12px;
+      color: var(--text-dim);
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      background: rgba(232,160,32,0.06);
+      border: 1px solid rgba(232,160,32,0.15);
+      padding: 5px 12px;
+      border-radius: 6px;
+    }
+
+    /* ── SOCIAL PROOF STRIP ── */
+    .social-strip {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 40px;
+      padding: 18px 20px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+    }
+
+    .social-stat {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .social-stat-num {
+      font-size: 18px;
+      font-weight: 900;
+      color: var(--accent);
+      letter-spacing: -0.03em;
+      line-height: 1;
+    }
+
+    .social-stat-label {
+      font-size: 11px;
+      color: var(--text-dim);
+      text-align: center;
+      line-height: 1.3;
+    }
+
+    .social-divider {
+      width: 1px;
+      height: 32px;
+      background: var(--border);
+    }
+
+    /* ── QUALIFYING FORM SECTION ── */
+    .form-section {
+      width: 100%;
+      background: var(--bg-card);
+      border: 1px solid var(--border-lt);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 40px;
+      padding: 36px 32px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 0;
+    }
+
+    .form-title {
+      font-size: clamp(20px, 3vw, 26px);
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      margin-bottom: 6px;
+    }
+
+    .form-title .accent { color: var(--accent); }
+
+    .form-subtitle {
+      font-size: clamp(16px, 2.5vw, 20px);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--accent);
+      margin-bottom: 24px;
+    }
+
+    /* Submit button */
+    .submit-btn {
+      width: 100%;
+      max-width: 400px;
+      background: var(--accent-btn);
+      color: #070806;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      padding: 14px 24px;
+      cursor: pointer;
+      transition: opacity 0.15s, transform 0.1s;
+      margin-bottom: 20px;
+    }
+
+    .submit-btn:hover { opacity: 0.92; transform: translateY(-1px); }
+    .submit-btn:active { transform: translateY(0); }
+
+    /* Bonus callout */
+    .bonus-callout {
+      background: rgba(232,160,32,0.05);
+      border: 1px solid rgba(232,160,32,0.15);
+      border-radius: var(--radius-sm);
+      padding: 14px 16px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      text-align: left;
+      width: 100%;
+    }
+
+    .bonus-callout-icon {
+      flex-shrink: 0;
+      font-size: 18px;
+      line-height: 1;
+      margin-top: 1px;
+    }
+
+    .bonus-callout-text {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .bonus-callout-text strong {
+      color: var(--text);
+      display: block;
+      font-size: 13px;
+      margin-bottom: 2px;
+    }
+
+    /* ── TESTIMONIALS ── */
+    .testimonials {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 48px;
+    }
+
+    .testimonial-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 20px 22px;
+    }
+
+    .testimonial-stars {
+      display: flex;
+      gap: 3px;
+      margin-bottom: 10px;
+    }
+
+    .testimonial-stars svg {
+      width: 13px; height: 13px;
+      fill: var(--accent);
+    }
+
+    .testimonial-text {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.65;
+      margin-bottom: 12px;
+    }
+
+    .testimonial-text strong { color: var(--text); }
+
+    .testimonial-author {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-dim);
+    }
+
+    /* ── FOOTER ── */
+    .footer {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .footer a {
+      font-size: 12px;
+      color: var(--text-dim);
+      transition: color 0.15s;
+    }
+
+    .footer a:hover { color: var(--text-muted); }
+
+    .footer-dot {
+      width: 3px; height: 3px;
+      background: var(--text-dim);
+      border-radius: 50%;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 520px) {
+      .field-row { grid-template-columns: 1fr; }
+      .social-strip { gap: 16px; }
+      .form-header, .form-body { padding-left: 20px; padding-right: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page">
+
+    <!-- LOGO -->
+    <div class="logo">
+      <img src="assets/pi-logo.png" alt="Premium Inboxes" />
+    </div>
+
+    <!-- CONFIRMATION HEADER -->
+    <div class="confirm-header">
+      <div class="success-badge">
+        <svg viewBox="0 0 14 14"><polyline points="2,7 5.5,10.5 12,3"/></svg>
+        On its way
+      </div>
+      <h1 class="confirm-headline">
+        Watch this <span class="accent">while you wait.</span>
+      </h1>
+      <p class="confirm-sub">
+        Your resource is heading to your inbox right now. In the meantime, watch this short video. It could save you weeks of troubleshooting.
+      </p>
+    </div>
+
+    <!-- VSL EMBED -->
+    <div class="vsl-wrap">
+      <div class="vsl-container">
+        <!-- ============================================================
+             REPLACE THIS ENTIRE BLOCK WITH YOUR VSL EMBED CODE
+             (e.g. Wistia, Vimeo, YouTube embed, Loom, etc.)
+             ============================================================ -->
+        <div class="vsl-placeholder">
+          <div class="vsl-play-btn">
+            <svg viewBox="0 0 16 16"><path d="M3 2.5l10 5.5-10 5.5V2.5z"/></svg>
+          </div>
+          <div class="vsl-placeholder-title">VSL Video Embed</div>
+          <div class="vsl-placeholder-sub">VSL embed</div>
+        </div>
+        <!-- ============================================================
+             END VSL EMBED BLOCK
+             ============================================================ -->
+      </div>
+    </div>
+
+    <!-- QUALIFYING FORM -->
+    <div class="form-section">
+      <h2 class="form-title">Tell us about your setup.</h2>
+      <p class="form-subtitle">Get our most valuable resource free.</p>
+      <button class="submit-btn" type="button" onclick="handleFormSubmit()">
+        Fix your email setup &rarr;
+      </button>
+      <div class="bonus-callout">
+        <div class="bonus-callout-icon">🎁</div>
+        <div class="bonus-callout-text">
+          <strong>You'll unlock the Cold Email Infrastructure Audit Checklist</strong>
+          The exact 27-point checklist Richard runs on every new client account. Sent to your inbox the moment you submit.
+        </div>
+      </div>
+    </div>
+
+    <!-- SOCIAL PROOF STRIP -->
+    <div class="social-strip">
+      <div class="social-stat">
+        <div class="social-stat-num">200K+</div>
+        <div class="social-stat-label">inboxes managed</div>
+      </div>
+      <div class="social-divider"></div>
+      <div class="social-stat">
+        <div class="social-stat-num">2,000+</div>
+        <div class="social-stat-label">agencies served</div>
+      </div>
+      <div class="social-divider"></div>
+      <div class="social-stat">
+        <div class="social-stat-num">340+</div>
+        <div class="social-stat-label">5-star reviews</div>
+      </div>
+      <div class="social-divider"></div>
+      <div class="social-stat">
+        <div class="social-stat-num">7 yrs</div>
+        <div class="social-stat-label">in cold email</div>
+      </div>
+    </div>
+
+    <!-- TESTIMONIALS -->
+    <div class="testimonials">
+
+      <div class="testimonial-card">
+        <div class="testimonial-stars">
+          <svg viewBox="0 0 10 10"><path d="M5 0l1.2 3.7H10L7 6l1.2 3.7L5 7.5l-3.2 2.2L3 6 0 3.7h3.8L5 0z"/></svg>
+          <svg viewBox="0 0 10 10"><path d="M5 0l1.2 3.7H10L7 6l1.2 3.7L5 7.5l-3.2 2.2L3 6 0 3.7h3.8L5 0z"/></svg>
+          <svg viewBox="0 0 10 10"><path d="M5 0l1.2 3.7H10L7 6l1.2 3.7L5 7.5l-3.2 2.2L3 6 0 3.7h3.8L5 0z"/></svg>
+          <svg viewBox="0 0 10 10"><path d="M5 0l1.2 3.7H10L7 6l1.2 3.7L5 7.5l-3.2 2.2L3 6 0 3.7h3.8L5 0z"/></svg>
+          <svg viewBox="0 0 10 10"><path d="M5 0l1.2 3.7H10L7 6l1.2 3.7L5 7.5l-3.2 2.2L3 6 0 3.7h3.8L5 0z"/></svg>
+        </div>
+        <p class="testimonial-text">
+          "The team at Premium Inboxes are the best. They are super fast with delivery and turnaround time and are fully transparent and communicative. <strong>They truly understand cold email infrastructure. Never had any issues when running my campaigns for myself and clients.</strong>"
+        </p>
+        <div class="testimonial-author">Hennock Lulseged, Cold Email Agency Owner</div>
+      </div>
+
+      <div class="testimonial-card">
+        <div class="testimonial-stars">
+          <svg viewBox="0 0 10 10"><path d="M5 0l1.2 3.7H10L7 6l1.2 3.7L5 7.5l-3.2 2.2L3 6 0 3.7h3.8L5 0z"/></svg>
+          <svg viewBox="0 0 10 10"><path d="M5 0l1.2 3.7H10L7 6l1.2 3.7L5 7.5l-3.2 2.2L3 6 0 3.7h3.8L5 0z"/></svg>
+          <svg viewBox="0 0 10 10"><path d="M5 0l1.2 3.7H10L7 6l1.2 3.7L5 7.5l-3.2 2.2L3 6 0 3.7h3.8L5 0z"/></svg>
+          <svg viewBox="0 0 10 10"><path d="M5 0l1.2 3.7H10L7 6l1.2 3.7L5 7.5l-3.2 2.2L3 6 0 3.7h3.8L5 0z"/></svg>
+          <svg viewBox="0 0 10 10"><path d="M5 0l1.2 3.7H10L7 6l1.2 3.7L5 7.5l-3.2 2.2L3 6 0 3.7h3.8L5 0z"/></svg>
+        </div>
+        <p class="testimonial-text">
+          "Super simple and not overwhelming at all. I come from a non-technical background and this was my first time buying so many domains, but <strong>their process and step-by-step guides made it incredibly easy.</strong>"
+        </p>
+        <div class="testimonial-author">Azam Ali, Lead Gen Agency Owner</div>
+      </div>
+
+      <div class="testimonial-card">
+        <div class="testimonial-stars">
+          <svg viewBox="0 0 10 10"><path d="M5 0l1.2 3.7H10L7 6l1.2 3.7L5 7.5l-3.2 2.2L3 6 0 3.7h3.8L5 0z"/></svg>
+          <svg viewBox="0 0 10 10"><path d="M5 0l1.2 3.7H10L7 6l1.2 3.7L5 7.5l-3.2 2.2L3 6 0 3.7h3.8L5 0z"/></svg>
+          <svg viewBox="0 0 10 10"><path d="M5 0l1.2 3.7H10L7 6l1.2 3.7L5 7.5l-3.2 2.2L3 6 0 3.7h3.8L5 0z"/></svg>
+          <svg viewBox="0 0 10 10"><path d="M5 0l1.2 3.7H10L7 6l1.2 3.7L5 7.5l-3.2 2.2L3 6 0 3.7h3.8L5 0z"/></svg>
+          <svg viewBox="0 0 10 10"><path d="M5 0l1.2 3.7H10L7 6l1.2 3.7L5 7.5l-3.2 2.2L3 6 0 3.7h3.8L5 0z"/></svg>
+        </div>
+        <p class="testimonial-text">
+          "Richard runs such a great business at Premium Inboxes. They handle everything, make setup easy, and are always available. <strong>Incredible response and resolution times whenever you need something.</strong> 100% recommend!"
+        </p>
+        <div class="testimonial-author">Phil B, RevOps Lead, SaaS Company</div>
+      </div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+      <a href="https://premiuminboxes.com" target="_blank">premiuminboxes.com</a>
+      <div class="footer-dot"></div>
+      <a href="https://premiuminboxes.com/privacy-policy" target="_blank">Privacy Policy</a>
+      <div class="footer-dot"></div>
+      <a href="https://premiuminboxes.com/anti-spam-policy" target="_blank">Anti-Spam Policy</a>
+    </div>
+
+  </div>
+
+  <script>
+    function handleFormSubmit() {
+      const role = document.getElementById('role').value;
+      const volume = document.getElementById('volume').value;
+      const problem = document.getElementById('biggest_problem').value;
+
+      if (!role || !volume || !problem) {
+        alert('Please answer all three questions to unlock your bonus resource.');
+        return;
+      }
+
+      // ============================================================
+      // REPLACE THIS BLOCK WITH YOUR ACTUAL FORM SUBMISSION LOGIC
+      // e.g. send to your CRM, tag in email platform, trigger automation
+      // ============================================================
+      console.log('Form submitted:', { role, volume, problem });
+
+      // Redirect to offer page for qualified leads, or show thank-you state
+      // Example: if (volume === '2000_plus' || volume === '500_2000') { window.location.href = '/offer'; }
+      alert('Checklist on its way! Check your inbox in the next few minutes.');
+      // ============================================================
+    }
+  </script>
+
+</body>
+</html>
